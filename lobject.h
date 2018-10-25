@@ -689,6 +689,7 @@ typedef struct Table {
   Node *lastfree;  /* any free position is before this position */
   struct Table *metatable;
   GCObject *gclist;
+  unsigned int LENPATCH;
 } Table;
 
 

@@ -393,7 +393,7 @@ LUA_API lua_Unsigned lua_rawlen (lua_State *L, int idx) {
     case LUA_TSHRSTR: return tsvalue(o)->shrlen;
     case LUA_TLNGSTR: return tsvalue(o)->u.lnglen;
     case LUA_TUSERDATA: return uvalue(o)->len;
-    case LUA_TTABLE: return luaH_getn(hvalue(o));
+    case LUA_TTABLE: return hvalue(o)->LENPATCH;
     default: return 0;
   }
 }
@@ -824,6 +824,7 @@ LUA_API void lua_seti (lua_State *L, int idx, lua_Integer n) {
     luaV_finishset(L, t, &aux, s2v(L->top - 1), slot);
   }
   L->top--;  /* pop value */
+  LENPATCH_UPDATE(hvalue(t), n);
   lua_unlock(L);
 }
 
@@ -834,6 +835,7 @@ LUA_API void lua_rawset (lua_State *L, int idx) {
   lua_lock(L);
   api_checknelems(L, 2);
   t = gettable(L, idx);
+  if (ttisinteger(s2v(L->top - 2))) LENPATCH_UPDATE(t, ivalue(s2v(L->top - 2)));
   slot = luaH_set(L, t, s2v(L->top - 2));
   setobj2t(L, slot, s2v(L->top - 1));
   invalidateTMcache(t);
@@ -841,7 +843,6 @@ LUA_API void lua_rawset (lua_State *L, int idx) {
   L->top -= 2;
   lua_unlock(L);
 }
-
 
 LUA_API void lua_rawseti (lua_State *L, int idx, lua_Integer n) {
   Table *t;

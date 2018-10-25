@@ -583,6 +583,7 @@ Table *luaH_new (lua_State *L) {
   t->flags = cast_byte(~0);
   t->array = NULL;
   t->alimit = 0;
+  t->LENPATCH = 0;
   setnodevector(L, t, 0);
   return t;
 }

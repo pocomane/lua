@@ -402,6 +402,17 @@ static int sort (lua_State *L) {
   return 0;
 }
 
+#include "lstate.h"
+
+static int setlen (lua_State *L) {
+  if (!ttistable(s2v(L->ci->func + 1)))
+    return luaL_error(L, "argument #1 must be a table");
+  lua_Integer i = luaL_checkinteger(L, 2);
+  lua_pushinteger(L, i);
+  hvalue(s2v(L->ci->func + 1))->LENPATCH = i;
+  return 0;
+}
+
 /* }====================================================== */
 
 
@@ -413,6 +424,7 @@ static const luaL_Reg tab_funcs[] = {
   {"remove", tremove},
   {"move", tmove},
   {"sort", sort},
+  {"setlen", setlen},
   {NULL, NULL}
 };
 

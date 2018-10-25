@@ -592,7 +592,7 @@ void luaV_objlen (lua_State *L, StkId ra, const TValue *rb) {
       Table *h = hvalue(rb);
       tm = fasttm(L, h->metatable, TM_LEN);
       if (tm) break;  /* metamethod? break switch to call it */
-      setivalue(s2v(ra), luaH_getn(h));  /* else primitive len */
+      setivalue(s2v(ra), h->LENPATCH);  /* else primitive len */
       return;
     }
     case LUA_TSHRSTR: {
@@ -1037,6 +1037,7 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
         }
         else
           Protect(luaV_finishset(L, s2v(ra), rb, rc, slot));
+        if (ttisinteger(rb)) LENPATCH_UPDATE(hvalue(s2v(ra)), ivalue(rb));
         vmbreak;
       }
       vmcase(OP_SETI) {
@@ -1051,6 +1052,7 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
           setivalue(&key, c);
           Protect(luaV_finishset(L, s2v(ra), &key, rc, slot));
         }
+        LENPATCH_UPDATE(hvalue(s2v(ra)), c);
         vmbreak;
       }
       vmcase(OP_SETFIELD) {
@@ -1772,6 +1774,7 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
           TValue *val = s2v(ra + n);
           setobj2t(L, &h->array[last - 1], val);
           last--;
+          LENPATCH_UPDATE(h, h->LENPATCH + 1);
           luaC_barrierback(L, obj2gco(h), val);
         }
         vmbreak;
