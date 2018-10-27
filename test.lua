@@ -1,11 +1,14 @@
 #!/usr/bin/lua
 
 ---------------------------------
+local build = ' gcc -Wall -O2 -std=c99 -DLUA_USE_LINUX -DLUA_USE_READLINE -I ./ -o lua lapi.c lcode.c lctype.c ldebug.c ldo.c ldump.c lfunc.c lgc.c llex.c lmem.c lobject.c lopcodes.c lparser.c lstate.c lstring.c ltable.c ltm.c lundump.c lvm.c lzio.c ltests.c lauxlib.c lbaselib.c ldblib.c liolib.c lmathlib.c loslib.c ltablib.c lstrlib.c lutf8lib.c loadlib.c lcorolib.c linit.c lua.c -lm -ldl -lreadline '
+os.execute('rm -fR lua-origin')
+os.execute('git clone ./ lua-origin/')
+os.execute('cd lua-origin/; git checkout f59e6a93c0ad38a27a420e51abf8f13d962446b5 ')
 print'compiling'
-local cmd = ' gcc -Wall -O2 -std=c99 -DLUA_USE_LINUX -DLUA_USE_READLINE -I ./ -o lua lapi.c lcode.c lctype.c ldebug.c ldo.c ldump.c lfunc.c lgc.c llex.c lmem.c lobject.c lopcodes.c lparser.c lstate.c lstring.c ltable.c ltm.c lundump.c lvm.c lzio.c ltests.c lauxlib.c lbaselib.c ldblib.c liolib.c lmathlib.c loslib.c ltablib.c lstrlib.c lutf8lib.c loadlib.c lcorolib.c linit.c lua.c -lm -ldl -lreadline '
-local ok = os.execute(' cd lua-origin; '..cmd)
+local ok = os.execute(' cd lua-origin; '..build)
 assert(ok == true)
-local ok = os.execute(cmd)
+local ok = os.execute(build)
 assert(ok == true)
 
 ---------------------------------
