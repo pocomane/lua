@@ -100,6 +100,8 @@ static int tremove (lua_State *L) {
   return 1;
 }
 
+#include "ltable.h"
+#include "lstate.h"
 
 /*
 ** Copy elements (1[f], ..., 1[e]) into (tt[t], tt[t+1], ...). Whenever
@@ -132,6 +134,8 @@ static int tmove (lua_State *L) {
         lua_geti(L, 1, f + i);
         lua_seti(L, tt, t + i);
       }
+      for (i = 0; i <= n-1; i++)
+        LENPATCH_UPDATE(hvalue(s2v(L->ci->func + tt)), t+i);
     }
   }
   lua_pushvalue(L, tt);  /* return destination table */
@@ -180,6 +184,8 @@ static int tpack (lua_State *L) {
   lua_insert(L, 1);  /* put it at index 1 */
   for (i = n; i >= 1; i--)  /* assign elements */
     lua_seti(L, 1, i);
+  for (i = 1; i <= n; i++)
+    LENPATCH_UPDATE(hvalue(s2v(L->ci->func + 1)), i);
   lua_pushinteger(L, n);
   lua_setfield(L, 1, "n");  /* t.n = number of elements */
   return 1;  /* return table */
