@@ -17,7 +17,7 @@
 
 
 #define LUA_VERSION_MAJOR	"5"
-#define LUA_VERSION_MINOR	"4"
+#define LUA_VERSION_MINOR	"4p"
 #define LUA_VERSION_NUM		504
 #define LUA_VERSION_RELEASE	"0"
 
