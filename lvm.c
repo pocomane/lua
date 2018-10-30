@@ -1037,7 +1037,7 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
         }
         else
           Protect(luaV_finishset(L, s2v(ra), rb, rc, slot));
-        if (ttisinteger(rb)) LENPATCH_UPDATE(hvalue(s2v(ra)), ivalue(rb));
+        LENPATCH_UPDATE_VK(hvalue(s2v(ra)), rb, s2v(rc));
         vmbreak;
       }
       vmcase(OP_SETI) {
@@ -1052,7 +1052,7 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
           setivalue(&key, c);
           Protect(luaV_finishset(L, s2v(ra), &key, rc, slot));
         }
-        LENPATCH_UPDATE(hvalue(s2v(ra)), c);
+        LENPATCH_UPDATE(hvalue(s2v(ra)), c, s2v(rc));
         vmbreak;
       }
       vmcase(OP_SETFIELD) {
@@ -1774,7 +1774,7 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
           TValue *val = s2v(ra + n);
           setobj2t(L, &h->array[last - 1], val);
           last--;
-          LENPATCH_UPDATE(h, h->LENPATCH + 1);
+          LENPATCH_UPDATE(h, h->LENPATCH + 1, val);
           luaC_barrierback(L, obj2gco(h), val);
         }
         vmbreak;

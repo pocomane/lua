@@ -53,6 +53,19 @@ LUAI_FUNC Node *luaH_mainposition (const Table *t, const TValue *key);
 LUAI_FUNC int luaH_isdummy (const Table *t);
 #endif
 
-#define LENPATCH_UPDATE(v,k) (v->LENPATCH+1 == k ? v->LENPATCH = k : 0)
+#define LENPATCH_UPDATE(t,k,v) do {  \
+  if (1) {                           \
+    if ((t)->LENPATCH+1 == (k)) {    \
+      (t)->LENPATCH = (k);           \
+    }                                \
+  }                                  \
+} while(0)
 
+#define LENPATCH_UPDATE_VK(t,k,v) do { \
+  if (ttisinteger(k)) LENPATCH_UPDATE(t,ivalue(k),v);\
+} while(0)
+
+#define LENPATCH_UPDATE_RN(t,min,max) do { \
+  if (min <= t->LENPATCH+1) t->LENPATCH = max; \
+} while(0)
 #endif

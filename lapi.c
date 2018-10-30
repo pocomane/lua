@@ -824,7 +824,7 @@ LUA_API void lua_seti (lua_State *L, int idx, lua_Integer n) {
     luaV_finishset(L, t, &aux, s2v(L->top - 1), slot);
   }
   L->top--;  /* pop value */
-  LENPATCH_UPDATE(hvalue(t), n);
+  LENPATCH_UPDATE(hvalue(t), n, t);
   lua_unlock(L);
 }
 
@@ -835,7 +835,7 @@ LUA_API void lua_rawset (lua_State *L, int idx) {
   lua_lock(L);
   api_checknelems(L, 2);
   t = gettable(L, idx);
-  if (ttisinteger(s2v(L->top - 2))) LENPATCH_UPDATE(t, ivalue(s2v(L->top - 2)));
+  LENPATCH_UPDATE_VK(t, s2v(L->top - 2), s2v(L->top - 1));
   slot = luaH_set(L, t, s2v(L->top - 2));
   setobj2t(L, slot, s2v(L->top - 1));
   invalidateTMcache(t);

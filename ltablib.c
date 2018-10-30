@@ -134,8 +134,7 @@ static int tmove (lua_State *L) {
         lua_geti(L, 1, f + i);
         lua_seti(L, tt, t + i);
       }
-      for (i = 0; i <= n-1; i++)
-        LENPATCH_UPDATE(hvalue(s2v(L->ci->func + tt)), t+i);
+      LENPATCH_UPDATE_RN(hvalue(s2v(L->ci->func + tt)), t, t+n-1);
     }
   }
   lua_pushvalue(L, tt);  /* return destination table */
@@ -185,7 +184,7 @@ static int tpack (lua_State *L) {
   for (i = n; i >= 1; i--)  /* assign elements */
     lua_seti(L, 1, i);
   for (i = 1; i <= n; i++)
-    LENPATCH_UPDATE(hvalue(s2v(L->ci->func + 1)), i);
+    LENPATCH_UPDATE(hvalue(s2v(L->ci->func + 1)), i, 0);
   lua_pushinteger(L, n);
   lua_setfield(L, 1, "n");  /* t.n = number of elements */
   return 1;  /* return table */
@@ -415,7 +414,7 @@ static int setlen (lua_State *L) {
     return luaL_error(L, "argument #1 must be a table");
   lua_Integer i = luaL_checkinteger(L, 2);
   lua_pushinteger(L, i);
-  hvalue(s2v(L->ci->func + 1))->LENPATCH = i;
+  LENPATCH_UPDATE_RN(hvalue(s2v(L->ci->func + 1)), 0, i);
   return 0;
 }
 
