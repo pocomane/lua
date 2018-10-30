@@ -93,20 +93,27 @@ luarun[===[ t=table.pack(1,2,nil,nil,5,6,nil,nil) print(#t)assert(#t==8) ]===]
 ---------------------------------
 local time = makeMeasure()
 local memory = makeMeasure()
+local time_bm = ' print(_VERSION) local t = {1,2,3} local s = os.clock() for i=1,9999999 do t[i] = i end print([[time]],os.clock()-s) '
+local memory_bm = ' print(_VERSION) local t = {1,2,3} for i=1,999 do t[i] = {} end print([[memory]],collectgarbage[[count]]) '
 print'benchmarking'
 for i=1,100 do
-  local bm = ' print(_VERSION) local t = {1,2,3} local s = os.clock() for i=1,999999 do t[i] = {} end print([[time]],os.clock()-s)print([[memory]],collectgarbage[[count]]) '
   print'---------'
-  local r = luarun(bm, 'lua-origin', true)
+  local r = luarun(time_bm, 'lua-origin', true)
   assert('5.4' == r:match('Lua ([^\n\r]*)'))
-  print'---------'
-  local R = luarun(bm, nil, true)
-  assert('5.4p' == R:match('Lua ([^\n\r]*)'))
-  print'---------'
   local t = tonumber((r:match('time\t([^\n\r]*)')))
+  local r = luarun(memory_bm, 'lua-origin', true)
+  assert('5.4' == r:match('Lua ([^\n\r]*)'))
   local m = tonumber((r:match('memory\t([^\n\r]*)')))
+  r = nil
+  print'---------'
+  local R = luarun(time_bm, nil, true)
+  assert('5.4p' == R:match('Lua ([^\n\r]*)'))
   local T = tonumber((R:match('time\t([^\n\r]*)')))
+  local R = luarun(memory_bm, nil, true)
+  assert('5.4p' == R:match('Lua ([^\n\r]*)'))
   local M = tonumber((R:match('memory\t([^\n\r]*)')))
+  R = nil
+  print'---------'
   print'patched/origin'
   print('time ratio',T/t)
   print('memory ratio',M/m)
