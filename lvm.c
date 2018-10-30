@@ -1770,11 +1770,11 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
         last = ((c-1)*LFIELDS_PER_FLUSH) + n;
         if (last > luaH_realasize(h))  /* needs more space? */
           luaH_resizearray(L, h, last);  /* preallocate it at once */
+        LENPATCH_UPDATE_RN(h, 0, h->LENPATCH+n);
         for (; n > 0; n--) {
           TValue *val = s2v(ra + n);
           setobj2t(L, &h->array[last - 1], val);
           last--;
-          LENPATCH_UPDATE(h, h->LENPATCH + 1, val);
           luaC_barrierback(L, obj2gco(h), val);
         }
         vmbreak;

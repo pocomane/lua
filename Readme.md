@@ -8,7 +8,6 @@ table. It behaves as the following:
 - The table.setlen function can be used to set the value of the new
 field. It does not change anything else.
 
-The execution time increases  by ~9% (when updating the len) while the
-memory size increases by ~8% (when storing empty tables). I think both
-can be improved with more conscientious changes.
+The execution time increases  by ~1% (when updating the len) while the
+memory size increases by ~8% (when storing empty tables).
 
